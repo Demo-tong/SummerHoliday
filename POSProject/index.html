@@ -15,33 +15,33 @@
 
 
     function collectItem(cartItem) {
-      let result = [];
+      let numOfItem = [];
 
       for (let i = 0; i < cartItem.length; i++) {
-        let existItem = result.find(function (item) {
+        let existItem = numOfItem.find(function (item) {
           return item.barcode === cartItem[i].barcode;
         });
 
         if (existItem) {
           existItem.count++;
         } else {
-          result.push(Object.assign({}, cartItem[i], {count: 1}));
+          numOfItem.push(Object.assign({}, cartItem[i], {count: 1}));
         }
       }
 
-      return result;
+      return numOfItem;
     }
 
     function getSubtotal(numOfItem) {
-      let result = [];
+      let itemList = [];
 
       for (let i = 0; i < numOfItem.length; i++) {
-        result.push(Object.assign({}, numOfItem[i],
+        itemList.push(Object.assign({}, numOfItem[i],
             {subtotal: numOfItem[i].count * numOfItem[i].price}
         ));
       }
 
-      return result;
+      return itemList;
     }
 
     function getTotal(itemList) {
