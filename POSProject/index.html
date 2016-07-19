@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+  <script type="text/javascript">
+
+    function printReceipt(cartItem) {
+      let numOfItem = collectItem(cartItem);
+      let itemList = getSubtotal(numOfItem);
+      let total = getTotal(itemList);
+
+      Print(itemList, total);
+    }
+
+
+    function collectItem(cartItem) {
+      let result = [];
+
+      for (let i = 0; i < cartItem.length; i++) {
+        let existItem = result.find(function (item) {
+          return item.barcode === cartItem[i].barcode;
+        });
+
+        if (existItem) {
+          existItem.count++;
+        } else {
+          result.push(Object.assign({}, cartItem[i], {count: 1}));
+        }
+      }
+
+      return result;
+    }
+
+    function getSubtotal(numOfItem) {
+      let result = [];
+
+      for (let i = 0; i < numOfItem.length; i++) {
+        result.push(Object.assign({}, numOfItem[i],
+            {subtotal: numOfItem[i].count * numOfItem[i].price}
+        ));
+      }
+
+      return result;
+    }
+
+    function getTotal(itemList) {
+      let total = 0;
+
+      for (let i = 0; i < itemList.length; i++) {
+        total += itemList[i].subtotal;
+      }
+
+      return total;
+    }
+
+    function Print(itemList, total) {
+
+      for (let i = 0; i < itemList.length; i++) {
+        console.log("名称：" + itemList[i].name + "\t数量:" + itemList[i].count + itemList[i].unit +
+            "\t单价:" + itemList[i].price + "元\t小计:" + itemList[i].subtotal + "元");
+      }
+
+      console.log("总计:" + total + "元");
+    }
+
+    let cartItem = [
+      {
+        barcode: "item00001",
+        name: "辣条",
+        unit: "包",
+        price: 1.00
+      },
+      {
+        barcode: "item00001",
+        name: "辣条",
+        unit: "包",
+        price: 1.00
+      },
+      {
+        barcode: "item00002",
+        name: "可口可乐",
+        unit: "瓶",
+        price: 3.50
+      },
+      {
+        barcode: "item00004",
+        name: "百事可乐",
+        unit: "瓶",
+        price: 3.50
+      },
+      {
+        barcode: "item00003",
+        name: "雪碧",
+        unit: "瓶",
+        price: 3.00
+      }
+    ];
+
+    printReceipt(cartItem);
+  </script>
+</head>
+<body>
+
+</body>
+</html>
