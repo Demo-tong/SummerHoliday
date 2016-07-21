@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>POS机实现</title>
+  <script src="items.js"></script>
+  <script>
+    let tags = [
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000003-2.5',
+      'ITEM000005',
+      'ITEM000005-2'
+    ];
+
+    function printReceipt(tags){
+      let allItems = loadAllItems();
+      console.log("商店内所有商品\n");
+      console.log(allItems);
+      //console.log("商店内所有商品\n" + JSON.stringify(allItems, null, 4));
+
+      let promotions = loadPromotions();
+      console.log("商店内所有优惠商品\n");
+      console.log(promotions);
+
+      let barcodes = generateBarcodes(tags);
+      console.log(barcodes);
+
+      let amountedBarcode = getAmount(barcodes);
+      console.log(amountedBarcode);
+
+      let typedBarcodes = getPromotionType(promotions, amountedBarcode);
+      console.log(typedBarcodes);
+
+      let cartItems = getCartItems(allItems, typedBarcodes);
+      console.log(cartItems);
+
+      let subtotalItems = getSubtotal(cartItems);
+      console.log(subtotalItems);
+
+      let promotedItems = getPromotion(subtotalItems);
+      console.log(promotedItems);
+
+      let savedItems = getSavedSubtotal(promotedItems);
+      console.log(savedItems);
+
+      let total = getAfterSavedTotal(savedItems);
+      let savedTotal = getSavedMoney(savedItems);
+
+      Print(total, savedTotal, savedItems);
+
+      //return subtotalItems;
+    }
+
+    //将tags数组拆分为barcodes对象数组，每个元素包含两个属性barcode、tag_amount
+    function generateBarcodes(tags){
+      let temp = [];
+      let barcodes = [];
+
+      for(let i=0; i<tags.length; ++i){
+        temp.push(tags[i].split('-'));
+
+        if(temp[i].length === 1){
+          barcodes.push(Object.assign({}, {barcode: temp[i][0], tag_amount: 1}));
+        }else{
+          barcodes.push(Object.assign({}, {barcode: temp[i][0], tag_amount: parseFloat(temp[i][1])}));
+        }
+      }
+
+      return barcodes;
+    }
+
+    //将barcodes数组中元素进行合并，即去重
+    function getAmount(barcodes){
+      let amountedBarcodes = [];
+
+      for(let i=0; i<barcodes.length; ++i){
+        let existitem = amountedBarcodes.find(function(item){
+          return item.barcode === barcodes[i].barcode;
+        })
+
+        if(existitem){
+          existitem.amount += barcodes[i].tag_amount;
+        }else{
+          amountedBarcodes.push(Object.assign({}, {barcode: barcodes[i].barcode, amount: barcodes[i].tag_amount}));
+        }
+      }
+
+      return amountedBarcodes;
+    }
+
+    //添加商品优惠的种类
+    function getPromotionType(promotions, amountedBarcodes){
+      let typedBarcodes = [];
+
+      for(let i=0; i<amountedBarcodes.length;){
+        let temp = i;
+        for(let j=0; j<promotions.length; ++j){
+          for(let k=0; k<promotions[j].barcodes.length; ++k){
+
+            if(amountedBarcodes[i].barcode === promotions[j].barcodes[k]){
+              typedBarcodes.push(Object.assign({}, amountedBarcodes[i], {type: promotions[j].type}));
+              ++i;
+              break;
+            }
+          }
+          break;
+        }
+        if(temp === i){
+          typedBarcodes.push(Object.assign({}, amountedBarcodes[i], {type: "NO_PROMOTION"}));
+          ++i;
+        }
+      }
+
+      return typedBarcodes;
+    }
+
+    //获取购物车中商品其他属性
+    function getCartItems(allItems, typedBarcodes){
+      let cartItems = [];
+
+      for(let i=0; i<typedBarcodes.length; ++i){
+        for(let j=0; j<allItems.length; ++j){
+          if(typedBarcodes[i].barcode === allItems[j].barcode){
+            cartItems.push(Object.assign({}, typedBarcodes[i], allItems[j]));
+          }
+        }
+      }
+
+      return cartItems;
+    }
+
+    //计算优惠前的每种商品的小计
+    function getSubtotal(cartItems){
+      let subtotalItems = [];
+
+      for(let i=0; i<cartItems.length; ++i){
+        subtotalItems.push(Object.assign({}, cartItems[i], {subtotal: cartItems[i].amount * cartItems[i].price}));
+      }
+
+      return subtotalItems;
+    }
+
+    //按照优惠类型计算每种商品优惠金额
+    function getPromotion(subtotalItems){
+      let promotedItems = [];
+
+      for(let i=0; i<subtotalItems.length; ++i){
+        let savedMoney = subtotalItems[i].price * parseInt(subtotalItems[i].amount/3);
+        promotedItems.push(Object.assign({}, subtotalItems[i], {promotion: savedMoney}));
+      }
+
+      return promotedItems;
+    }
+
+    //计算优惠之后每种商品的小计
+    function getSavedSubtotal(promotedItems){
+      let savedItems = [];
+
+      for(let i=0; i<promotedItems.length; ++i){
+        savedItems.push(Object.assign({}, promotedItems[i], {afterSavedSubtotal: promotedItems[i].subtotal - promotedItems[i].promotion}));
+      }
+
+      return savedItems;
+    }
+
+    //计算优惠后购买商品总金额
+    function getAfterSavedTotal(savedItems){
+      let total = 0;
+
+        for(let item of savedItems){
+          total += item.afterSavedSubtotal;
+        }
+
+      return total;
+    }
+
+    //计算优惠总金额
+    function getSavedMoney(savedItems){
+      let savedTotal = 0;
+
+      for(let item of savedItems){
+        savedTotal += item.promotion;
+      }
+      return savedTotal;
+    }
+
+    //打印小票
+    function Print(total, savedTotal, savedItems){
+
+      console.log("***<没钱赚商店>收据***");
+      for(let i=0; i<savedItems.length; ++i){
+        console.log("名称：" + savedItems[i].name + "，数量：" + savedItems[i].amount + savedItems[i].unit +
+            "，单价：" + savedItems[i].price + "(元)，小计：" + savedItems[i].afterSavedSubtotal + "(元)");
+      }
+
+      console.log("－－－－－－－－－－－－－－－－－－－－－");
+      console.log("总计：" + total + "(元)\n" + "节省：" + savedTotal + "(元)");
+      console.log("************************************* ")
+    }
+
+    printReceipt(tags);
+  </script>
+</head>
+
+<body>
+
+</body>
+</html>
