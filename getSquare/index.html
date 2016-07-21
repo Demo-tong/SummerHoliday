@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>100以内的奇数平方和</title>
+</head>
+<script>
+
+  function getSquare(inputNum){
+
+    let myArray = createArray(inputNum);
+
+    let oddArray = getOdd(myArray);
+
+    let squareArray = doSquare(oddArray);
+
+    let total = getTotal(squareArray);
+
+    return total;
+  }
+
+  function createArray(inputNum){
+    let myArray = [];
+
+    for(let i=1; i<100; ++i){
+        myArray.push(i);
+    }
+
+    return myArray;
+  }
+
+  function getOdd(inputNum){
+    let oddArray = [];
+
+    for(let i=1; i<100; ++i){
+      if( i%2 ){
+        oddArray.push(i);
+      }
+    }
+
+    return oddArray;
+  }
+
+  function doSquare(oddArray){
+    let squareArray = [];
+
+    for(let i=0; i<oddArray.length; ++i){
+      squareArray.push(oddArray[i]*oddArray[i]);
+    }
+
+    return squareArray;
+  }
+
+  function getTotal(squareArray){
+    let total = 0;
+
+    for(let i=0; i<squareArray.length; ++i){
+      total += squareArray[i];
+    }
+
+    return total;
+  }
+
+  let inputNum = 100;
+
+  console.log(getSquare(inputNum));
+</script>
+<body>
+
+</body>
+</html>
