@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<script>
+  let tags = [
+    'ITEM0',
+    'ITEM3-2',
+    'ITEM3-2.5',
+    'ITEM0',
+    'ITEM1'
+  ];
+
+  function formatTags(tags){
+    return tags.map(function(item){
+      let info = item.split('-');
+
+      return {
+        barcode: info[0],
+        amount: parseFloat(info[1]) || 1
+      }
+    });
+  }
+
+  function mergeBarcode(barcodes){
+    return barcodes.reduce(function(cur, newVal){
+      let exist = cur.find(function(item){
+        return item.barcode === newVal.barcode;
+      });
+
+      if(exist){
+        exist.amount += newVal.amount;
+      }else{
+        cur.push(Object.assign({}, newVal));
+      }
+
+      return cur;
+    }, []);
+  }
+  let barcodes = formatTags(tags);
+  console.log("barcodes:");
+  console.log(JSON.stringify(barcodes, null, 4));
+
+  let mergedBarcodes = mergeBarcode(barcodes);
+  console.log("mregedBarcodes:");
+  console.log(JSON.stringify(mergedBarcodes, null, 4));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /*function formatTags(tags){
+    return tags.map(function(item){
+      let info = item.split('-');
+
+      return {
+        barcode: info[0],
+        amount: parseFloat(info[1]) || 1
+      }
+    });
+  }
+
+  function mergeBarcode(barcodes){
+    return barcodes.reduce(function(cur, newVal){
+      let exist = cur.find(function(item){
+        return item.barcode === newVal.barcode;
+      });
+
+      if(exist){
+        exist.amount += newVal.amount;
+      }else{
+        cur.push(Object.assign({}, newVal));
+      }
+
+      return cur;
+    }, []);
+  }
+
+  let barcodes = formatTags(tags);
+  console.log("barcodes:\n");
+  console.log(JSON.stringify(barcodes, null, 4));
+
+  let mergedBarcodes = mergeBarcode(barcodes);
+  console.log("mergedBarcodes:\n");
+  console.log(JSON.stringify(mergedBarcodes, null, 4));*/
+</script>
+<body>
+
+</body>
+</html>

@@ -4,6 +4,106 @@
   <meta charset="UTF-8">
   <title>Title</title>
 </head>
+<script>
+  let tags = [
+    'ITEM0',
+    'ITEM3-2',
+    'ITEM3-2.5',
+    'ITEM0',
+    'ITEM1'
+  ];
+
+  function formatTags(tags){
+    return tags.map(function(item){
+      let temp = item.split('-');
+
+      return {
+        barcode: temp[0],
+        amount: parseFloat(temp[1]) || 1
+      }
+    });
+  }
+
+  function mergeBarcodes(barcodes){
+    return  barcodes.reduce(function(cur, newVal){
+      let exist = cur.find(function(item){
+        return item.barcode === newVal.barcode;
+      })
+
+      if(exist){
+        exist.amount += newVal.amount;
+      }else{
+        cur.push(Object.assign({}, newVal));
+      }
+
+      return cur;
+    }, []);
+
+  }
+  /*function mergeBarcodes(barcodes){
+    let mergedBarcodes = [];
+
+    for(let i=0; i<barcodes.length; ++i){
+      let exist = mergedBarcodes.find(function(item){
+        return item.barcode === barcodes[i].barcode;
+      });
+
+      if(exist){
+        exist.amount += barcodes[i].amount;
+      }else{
+        mergedBarcodes.push(Object.assign({}, {barcode: barcodes[i].barcode, amount: barcodes[i].amount}));
+      }
+    }
+
+    return mergedBarcodes;
+  }*/
+
+
+  let barcodes = formatTags(tags);
+  console.log(formatTags(tags));
+  console.log(mergeBarcodes(barcodes));
+  /*  function formatTags(tags){
+   let barcodes = [];
+   let temp = [];
+
+   for(let i=0; i<tags.length; ++i){
+   temp.push(tags[i].split('-'));
+
+   if(temp[i].length === 1){
+   barcodes.push(Object.assign({}, {barcode: temp[i][0], amount: 1}));
+   }else{
+   barcodes.push(Object.assign({}, {barcode: temp[i][0], amount: Number(temp[i][1])}));
+   }
+   }
+
+   return barcodes;
+   }*/
+  /*  function formatTags(tags){
+   let barcodes = [];
+
+   for(let item of tags){
+   let temp = item.split('-');
+
+   if(temp.length === 1){
+   barcodes.push({barcode: temp[0], amount: 1});
+   }else{
+   barcodes.push({barcode: temp[0], amount: Number(temp[1])});
+   }
+   }
+
+   return barcodes;
+   }*/
+  /*  function formatTags(tags){
+
+   return tags.map(function(item){
+   let temp = item.split('-');
+
+   return (temp.length === 2)?
+   ({barcode: temp[0], amount: parseFloat(temp[1])}):
+   ({barcode: temp[0], amount: 1});
+   });
+   }*/
+</script>
 <body>
 
 </body>

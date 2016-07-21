@@ -3,6 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <script>
+    let tags = [
+        'ITEM0',
+        'ITEM3-2',
+        'ITEM3-2.5',
+        'ITEM0',
+        'ITEM1'
+    ]
+    function parseTags(tags){
+      let temp = [];
+      let barcodes = [];
+      let outputArray = [];
+
+      for(let i=0; i<tags.length; ++i){
+        temp.push(tags[i].split('-'));
+      }
+
+      for(let i=0; i<temp.length; ++i){
+        if(temp[i].length === 1){
+          barcodes.push(Object.assign({}, {barcode: temp[i][0], tag_amount: 1}));
+        }else{
+          barcodes.push(Object.assign({}, {barcode: temp[i][0], tag_amount: Number(temp[i][1])}));
+        }
+      }
+
+      for(let i=0; i<barcodes.length; ++i){
+        let exist = outputArray.find(function(item){
+          return item.barcode === barcodes[i].barcode;
+        });
+
+        if(exist){
+          exist.amount += barcodes[i].tag_amount;
+        }else{
+          outputArray.push(Object.assign({}, {barcode: barcodes[i].barcode, amount: barcodes[i].tag_amount}));
+        }
+      }
+      console.log(outputArray);
+    }
+    console.log(parseTags(tags));
+  </script>
 </head>
 <body>
 
