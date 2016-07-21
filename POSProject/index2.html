@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="items.js"></script>
+  <script>
+    let barcodes = [
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000003',
+      'ITEM000005',
+      'ITEM000005'
+    ];
+    function PrintReceipt(barcodes) {
+      let allItems = loadAllItems();
+
+      let countedBarcodes = getCount(barcodes);
+      let cartItems = getCartItems(allItems, countedBarcodes);
+
+      return cartItems;
+    }
+
+    function getCount(barcodes) {
+      let countedBarcodes = [];
+
+      for (let i = 0; i < barcodes.length; ++i) {
+
+        let result = countedBarcodes.find(function (item) {
+          return item.barcode === barcodes[i];
+        });
+
+        if (result) {
+          result.count++;
+        } else {
+          countedBarcodes.push(Object.assign({}, {barcode: barcodes[i], count: 1}));
+        }
+      }
+
+      return countedBarcodes;
+    }
+
+    function getCartItems(allItems, countedBarcodes) {
+
+      let cartItems = [];
+
+      for (let i = 0; i < countedBarcodes.length; ++i) {
+        for (let j = 0; j < allItems.length; ++j) {
+          if (countedBarcodes[i].barcode === allItems[j].barcode) {
+            cartItems.push(Object.assign({}, allItems[j], {count: countedBarcodes[i].count}));
+          }
+        }
+      }
+
+      return cartItems;
+    }
+
+    console.log(PrintReceipt(barcodes));
+  </script>
+</head>
+<body>
+
+</body>
+</html>
