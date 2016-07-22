@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  div#box {
+    text-align: center;
+    background-color: antiquewhite;
+  }
+
+  table{
+    position: relative;
+    left: 50%;
+  }
+</style>
+<script>
+  let barcodes = [
+    {
+      barcode: "I01",
+      amount: 2
+    },
+    {
+      barcode: 'I02',
+      amount: 3.9
+    }
+  ];
+
+  function insertTable() {
+    //alert(barcodes[0].barcode);
+    var div = document.getElementById("box");
+
+    var mytable = document.createElement("table");
+    var tbody = document.createElement("tbody");
+
+    //表头信息　条码　数量
+    var tr1 = document.createElement("tr");
+
+    var firtd = document.createElement("td");
+    var firText = document.createTextNode("条码");
+    firtd.appendChild(firText);
+    firtd.setAttribute("width", 50);
+    firtd.setAttribute("align", "center");
+    tr1.appendChild(firtd);
+    mytable.appendChild(tr1);
+
+    var sectd = document.createElement("td");
+    var secText = document.createTextNode("数量");
+    sectd.appendChild(secText);
+    sectd.setAttribute("width", 50);
+    sectd.setAttribute("align", "center");
+    tr1.appendChild(sectd);
+    mytable.appendChild(tr1);
+
+
+    for (let item of barcodes) {
+      var mytr = document.createElement("tr");
+      //这里直接创建两个td将信息添加进去，不过有一个问题　　怎样确定对象数组中对象的属性的个数
+      var mytd1 = document.createElement("td");
+      var myText1 = document.createTextNode(item.barcode);
+      mytd1.appendChild(myText1);
+      mytd1.setAttribute("width", 50);
+      mytd1.setAttribute("align", "center");
+      mytr.appendChild(mytd1);
+
+      var mytd2 = document.createElement("td");
+      var myText2 = document.createTextNode(item.amount);
+      mytd2.appendChild(myText2);
+      mytd2.setAttribute("width", 50);
+      mytd2.setAttribute("align", "center");
+      mytr.appendChild(mytd2);
+      mytable.appendChild(mytr);
+    }
+
+    mytable.setAttribute("border", 1);
+    div.appendChild(mytable);
+  }
+</script>
+<body onload="insertTable()">
+
+<div id="box">
+</div>
+</body>
+</html>
